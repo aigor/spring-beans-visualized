@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<meta charset="utf-8">
+<head>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+</head>
+
+<body>
+  <div class="controlls">
+    <input type="text" id="typeFilter" size="40" placeholder="Filter beans" onkeydown="if (event.keyCode == 13) { redrawGraph() }"/>
+    <input type="text" id="typeHighlight" size="40" placeholder="Highlight beans" onkeydown="if (event.keyCode == 13) { redrawGraph() }"/>
+    <input type="button" value="Redraw" onclick="redrawGraph()"/>
+    <label id="statistic">Loading data ...</label>
+  </div>
+  <div id="canvas">
+  </div>
+
+<script>
+
+// --- Some goodiness ----------------------------------------------------------
+// [B](f: (A) ⇒ [B]): [B]  ; Although the types in the arrays aren't strict (:
+Array.prototype.flatMap = function(lambda) {
+    return Array.prototype.concat.apply([], this.map(lambda));
+};
+
+// --- Application -------------------------------------------------------------
+var drawApplicationGraph = function(beanUrl, typeFilter, highlightBeans, calcullationsDoneCallback, errorCallback) {
+  var width = window.innerWidth - 10,
+      height = window.innerHeight - 55;
+
+  var svg = d3.select("div[id=canvas]").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  var force = d3.layout.force()
+      .gravity(0.05)
+      .distance(70)
+      .charge(-100)
+      .size([width, height]);
+
+  d3.json(beanUrl, function(error, json) {
+    if (error) {
+      errorCallback(error);
+      return;
+    };
+
+    var beanTypeContains = function(b, filter) { return b.type.toLowerCase().indexOf(filter.toLowerCase()) != -1 };
+    var beans = typeFilter != ''
+                ? json[0].beans.filter(function(b){ return beanTypeContains(b, typeFilter)})
+                : json[0].beans;
+    var beanNodes = beans.map(function (b){
+      return {
+        name: b.bean,
+        group: 1,
+        isHighlighted: beanTypeContains(b, highlightBeans)
+      }
+    });
+
+    var beanNodesHash = {};
+    beanNodes.forEach(function (n, index){ beanNodesHash[n.name] = index; })
+
+    function nameToId(name) {
+      return beanNodesHash[name];
+    }
+
+    function beanToLinks(bean) {
+      return bean.dependencies.map(function (reference) {
+        return {
+          source: nameToId(reference),
+          target: nameToId(bean.bean),
+          value: 1
+        };
+      }).filter(function (link){
+        return link.source != undefined && link.target != undefined;
+      });
+    }
+
+    var beanLinks = beans.flatMap(beanToLinks);
+
+    calcullationsDoneCallback(beanNodes, beanLinks);
+
+    force
+        .nodes(beanNodes)
+        .links(beanLinks)
+        .start();
+
+    var link = svg.selectAll(".link")
+        .data(beanLinks)
+      .enter().append("line")
+        .attr("class", "link");
+
+    var node = svg.selectAll(".node")
+        .data(beanNodes)
+      .enter().append("g")
+        .attr("class", "node")
+        .call(force.drag);
+
+    node.append("image")
+        .attr("xlink:href", function(b) {return b.isHighlighted ? "img/bean-red.png" : "img/bean.png"})
+        .attr("x", -8)
+        .attr("y", -8)
+        .attr("width", 16)
+        .attr("height", 16);
+
+    node.append("text")
+        .attr("dx", 12)
+        .attr("dy", ".35em")
+        .text(function(d) { return d.name });
+
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    });
+  });
+}
+
+// --- Application config ------------------------------------------------------
+var BEANS_URL = "/beans";
+var HIGHTLIGHT_BEANS = "org.springframework";
+
+var updateStatus = function(message){
+  document.getElementById('statistic').innerHTML = message;
+}
+
+var showStatictic = function(beanNodes, beanLinks){
+  console.log("Number of beans: " + beanNodes.length);
+  console.log("Number of dependencies: " + beanLinks.length);
+  updateStatus('Shown beans: ' + beanNodes.length + ", shown links: " + beanLinks.length);
+}
+
+var onError = function(error) {
+  updateStatus('Error happened while loading beans data: ' + error.responseText);
+}
+
+var redrawGraph = function(){
+  var getInput = function(id) { return document.getElementById(id).value };
+  redrawGraphForTypeFilter(getInput('typeFilter'), getInput('typeHighlight'));
+}
+
+var redrawGraphForTypeFilter = function(typeFilter, typeHighlight) {
+  console.log("Redrawing content with type filter: " + typeFilter + ", highlight: " + typeHighlight);
+  d3.select("svg").remove();
+  drawApplicationGraph(BEANS_URL, typeFilter, typeHighlight, showStatictic, onError);
+}
+
+console.log("Spring Beans Visualized v. 0.0.1");
+redrawGraph();
+
+</script>
+</body>
+</html>

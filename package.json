@@ -1,0 +1,15 @@
+{
+  "name": "spring-beans-visualized",
+  "version": "1.0.0",
+  "description": "Spring Beans Visualized",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "aigor",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "request": "^2.79.0"
+  }
+}
