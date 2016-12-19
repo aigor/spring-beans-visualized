@@ -14,7 +14,7 @@ Allows to dig deeper into your application.
 
 * You may need to configure Spring Beans Visualized application by modifying constants in ```app.json``` file. Most likely you have to setup your user/password and application host/port, probably Spring Boot Actuator endpoints base path.
 
-* Get dependencies & start Spring Beans Visualized application
+* Get dependencies & start _Spring Beans Visualized_ application
 ```
 npm install
 node app.js
