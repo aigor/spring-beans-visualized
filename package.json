@@ -1,7 +1,7 @@
 {
   "name": "spring-beans-visualized",
   "version": "1.0.0",
-  "description": "Spring Beans Visualized",
+  "description": "Spring Beans Visualized: View Your Beans at Runtime",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
