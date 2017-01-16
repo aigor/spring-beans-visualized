@@ -2,12 +2,15 @@ var express = require('express')
 var request = require('request')
 var app = express()
 
-var USER = 'admin'
-var PASSWORD = 'password'
-var SCHEMA = 'http'
-var HOST = 'localhost:8080'
-var ACTUATOR_BASE_PATH = ''
-var BEANS_URL = SCHEMA + '://' + USER + ':' + PASSWORD + '@' + HOST + ACTUATOR_BASE_PATH + '/beans'
+var SERVICE_PORT = process.env.SERVICE_PORT
+
+var USER = process.env.CLIENT_APP_USER
+var PASSWORD = process.env.CLIENT_APP_PASSWORD
+var SCHEMA = process.env.CLIENT_APP_SCHEMA
+var HOST = process.env.CLIENT_APP_HOST
+var PORT = process.env.CLIENT_APP_PORT
+var ACTUATOR_BASE_PATH = process.env.CLIENT_APP_ACTUATOR_BASE_PATH
+var BEANS_URL = SCHEMA + '://' + USER + ':' + PASSWORD + '@' + HOST + ':' + PORT + ACTUATOR_BASE_PATH + '/beans'
 
 var time = function() { return new Date().getTime() }
 var timeSince = function(start) { return time() - start }
@@ -22,17 +25,18 @@ app.get('/beans', function (req, res) {
       res.send(body)
     } else {
       if (error != null){
-        console.log('Error while getting Spring application beans. Errors: ' + error + ', took: ' + timeSince(startTime) + " ms.")
+        console.log('Error while getting Spring application beans. Errors: ' + error + ', took: ' + timeSince(startTime) + ' ms.')
         res.status(500).send(error)
       } else {
         console.log('Error while getting Spring application beans. Status: '
-                    + response.statusCode + ", body: " + response.body + ', took: ' + timeSince(startTime) + " ms.")
+                    + response.statusCode + ', body: ' + response.body + ', took: ' + timeSince(startTime) + ' ms.')
         res.status(response.statusCode).send(response.body)
       }
     }
   })
 })
 
-app.listen(3000, function () {
-  console.log('Spring Beans Visualized App listening on port 3000!')
+app.listen(SERVICE_PORT, function () {
+  console.log('Spring Beans Visualized App listening on port ' + SERVICE_PORT)
+  console.log('Beans info located on: ' + BEANS_URL)
 })
