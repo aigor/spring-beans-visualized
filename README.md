@@ -48,6 +48,7 @@ License: [ISC](http://www.isc.org/downloads/software-support-policy/isc-license/
 ## Plans for future improvements
 
 * Add arrows to show ussage direction.
+* Shorten bean names with package.
 * More information about beans (singleton/prototype).
 * Clustering by package, component type, etc.
 * Multiple Spring contexts support.
