@@ -47,8 +47,9 @@ License: [ISC](http://www.isc.org/downloads/software-support-policy/isc-license/
 
 ## Plans for future improvements
 
-* Docker image support (build file for _Spring Beans Visualized_).
-* Better error handling.
+* Add arrows to show ussage direction.
 * More information about beans (singleton/prototype).
 * Clustering by package, component type, etc.
 * Multiple Spring contexts support.
+* Do not reread bean definitions every time - cache it somehow.
+* Better error handling.
