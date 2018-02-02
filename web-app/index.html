@@ -46,13 +46,15 @@ var drawApplicationGraph = function(beanUrl, typeFilter, highlightBeans, calcull
       return;
     };
 
-    var beanTypeContains = function(b, filter) { return b.type.toLowerCase().indexOf(filter.toLowerCase()) != -1 };
+    var beanTypeContains = function(b, filter) { return b[1].type.toLowerCase().indexOf(filter.toLowerCase()) != -1 };
+
     var beans = typeFilter != ''
-                ? json[0].beans.filter(function(b){ return beanTypeContains(b, typeFilter)})
-                : json[0].beans;
+                ? Object.entries(json.beans).filter(function(b){ return beanTypeContains(b, typeFilter)})
+                : Object.entries(json.beans);
+
     var beanNodes = beans.map(function (b){
       return {
-        name: b.bean,
+        name: b[0],
         group: 1,
         isHighlighted: beanTypeContains(b, highlightBeans)
       }
@@ -66,10 +68,10 @@ var drawApplicationGraph = function(beanUrl, typeFilter, highlightBeans, calcull
     }
 
     function beanToLinks(bean) {
-      return bean.dependencies.map(function (reference) {
+      return Array.from(Object.values(bean[1].dependencies)).map(function (reference) {
         return {
           source: nameToId(reference),
-          target: nameToId(bean.bean),
+          target: nameToId(bean[0]),
           value: 1
         };
       }).filter(function (link){
