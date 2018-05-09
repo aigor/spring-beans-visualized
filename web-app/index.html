@@ -47,9 +47,25 @@ var drawApplicationGraph = function(beanUrl, typeFilter, highlightBeans, calcull
     };
 
     var beanTypeContains = function(b, filter) { return b.type.toLowerCase().indexOf(filter.toLowerCase()) != -1 };
-    var beans = typeFilter != ''
-                ? json[0].beans.filter(function(b){ return beanTypeContains(b, typeFilter)})
-                : json[0].beans;
+    var beans = null;
+    if (json.contexts) {
+      beans = [];
+      Object.keys(json.contexts).forEach(function(ctx) {
+        var beansOfContext = json.contexts[ctx].beans;
+        Object.keys(beansOfContext).forEach(function(beanName){
+          var b = beansOfContext[beanName];
+          if (typeFilter == '' || beanTypeContains(b, typeFilter)) {
+            b.bean = beanName;
+            beans.push(b);
+          }
+        });
+      });
+    } else {
+      beans = typeFilter != ''
+        ? json[0].beans.filter(function(b){ return beanTypeContains(b, typeFilter)})
+        : json[0].beans;
+    }
+
     var beanNodes = beans.map(function (b){
       return {
         name: b.bean,
