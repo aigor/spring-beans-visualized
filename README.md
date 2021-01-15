@@ -12,14 +12,27 @@ Allows to dig deeper into your application.
 
 * You should have running Spring Boot application with enabled Spring Boot Actuator ```beans``` endpoint.
 
-* You may need to configure Spring Beans Visualized application by modifying constants in ```app.json``` file. Most likely you have to setup your user/password and application host/port, probably Spring Boot Actuator endpoints base path.
+* You may need to configure Spring Beans Visualized application by etting environment variables. Most likely you have to setup your user/password and application host/port, probably Spring Boot Actuator endpoints base path.
 
 * Get dependencies & start _Spring Beans Visualized_ application
 ```
 npm install
+CLIENT_APP_USER=poweruser CLIENT_APP_PASSWORD=password node app.js
 node app.js
 ```
+
 * Browse your application at ```http://localhost:3000```.
+
+
+Environment variables are:
+
+*  SERVICE_PORT 3000
+*  CLIENT_APP_USER default 'admin'
+*  CLIENT_APP_PASSWORD default 'Password1'
+*  CLIENT_APP_SCHEMA default 'http'
+*  CLIENT_APP_HOST default 'localhost'
+*  CLIENT_APP_PORT default '80'
+*  CLIENT_APP_ACTUATOR_BASE_PATH default '/management'
 
 ## Build and run application using Docker
 
