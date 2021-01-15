@@ -2,14 +2,14 @@ var express = require('express')
 var request = require('request')
 var app = express()
 
-var SERVICE_PORT = process.env.SERVICE_PORT
+var SERVICE_PORT = process.env.SERVICE_PORT || 3000
 
-var USER = process.env.CLIENT_APP_USER
-var PASSWORD = process.env.CLIENT_APP_PASSWORD
-var SCHEMA = process.env.CLIENT_APP_SCHEMA
-var HOST = process.env.CLIENT_APP_HOST
-var PORT = process.env.CLIENT_APP_PORT
-var ACTUATOR_BASE_PATH = process.env.CLIENT_APP_ACTUATOR_BASE_PATH
+var USER = process.env.CLIENT_APP_USER || 'admin'
+var PASSWORD = process.env.CLIENT_APP_PASSWORD || 'Password1'
+var SCHEMA = process.env.CLIENT_APP_SCHEMA || 'http'
+var HOST = process.env.CLIENT_APP_HOST || 'localhost'
+var PORT = process.env.CLIENT_APP_PORT || '80'
+var ACTUATOR_BASE_PATH = process.env.CLIENT_APP_ACTUATOR_BASE_PATH || '/management'
 var BEANS_URL = SCHEMA + '://' + USER + ':' + PASSWORD + '@' + HOST + ':' + PORT + ACTUATOR_BASE_PATH + '/beans'
 
 var time = function() { return new Date().getTime() }
